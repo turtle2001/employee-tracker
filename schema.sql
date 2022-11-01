@@ -1,12 +1,12 @@
-DROP DATABASE IF EXISTS store_db;
+DROP DATABASE IF EXISTS buisness_db;
 
-CREATE DATABASE store_db;
+CREATE DATABASE buisness_db;
 
-USE store_db;
+USE buisness_db;
 
 CREATE TABLE department (
     id INT,
-    dep_name VARCHAR(30) NOT NULL,
+    name VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
 

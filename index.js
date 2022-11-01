@@ -50,7 +50,7 @@ function start() {
                     viewDepartments();
                     break;
                 case 'Add Department':
-                    addEngineer();
+                    addDepartment();
                     break;
                 case 'Quit':
                     addIntern();
@@ -98,7 +98,8 @@ function viewEmployee() {
     });
 }
 
-function addDepartment(){
+//almost done
+function addDepartment() {
     inquirer
         .prompt(
             {
@@ -106,6 +107,13 @@ function addDepartment(){
                 name: 'name',
             }
         )
-        .then()
+        .then((res) => {
+            let query = `INSERT INTO department (id, name) VALUES (5,"${res.name}");`;
+            conn.query(query, function (err, res) {
+                if (err) throw err;
+                viewDepartments();
+                start();
+            });
+        })
 }
 start()

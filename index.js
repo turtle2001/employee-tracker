@@ -12,7 +12,7 @@ const conn = mysql.createConnection(
         // MySQL username,
         user: 'root',
         // MySQL password
-        password: 'Oaklandaz921.',
+        password: '',
         database: 'buisness_db'
     },
     console.log(`Connected to the buisness_db database.`)
@@ -79,16 +79,15 @@ function viewRoles() {
     });
 }
 
-//done
-function viewEmployees() {
-    let query = "SELECT * from employee";
+//manager not done
+function viewEmployees() {                                                                                                                                                               // FROM employees JOIN roles ON roles.roles_id = employees.roles_id JOIN departments ON departments.departments_id = roles.departments_id;',
+    let query = "SELECT employee.id AS id, employee.first_name AS First_Name, employee.last_name AS Last_Name, role.title AS title, department.name AS department, role.salary AS salary FROM employee JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id;";
     conn.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
         start();
     });
 }
-
 
 //done
 function addDepartment() {
@@ -109,20 +108,20 @@ function addDepartment() {
         })
 }
 
-async function depList() {
-    conn.query(query, function (err, res) {
+function depList() {
+    conn.query("SELECT department_name FROM departments", (err, res) => {
         if (err) throw err;
         let roles = res.map((list) => { return list.title; })
-        console.log(roles);
         return roles;
     });
 }
 
 function addRole() {
-    let query = "SELECT title FROM role";
+    let list = depList();
     inquirer
         .prompt([
             {
+                type: 'input',
                 message: 'What is the name of the role?',
                 name: 'name',
             },
@@ -134,9 +133,10 @@ function addRole() {
                 type: 'list',
                 message: 'Which department does the role belong to?',
                 name: 'role',
-                choices: roles,
+                choices: list,
             }
         ])
+        .catch((err) => { console.log(err) })
         .then((res) => {
             let query = `INSERT INTO department (name) VALUES ("${res.name}");`;
             conn.query(query, function (err, res) {

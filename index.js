@@ -15,7 +15,7 @@ const conn = mysql.createConnection(
         password: 'Oaklandaz921.',
         database: 'buisness_db'
     },
-    console.log(`Connected to the movies_db database.`)
+    console.log(`Connected to the buisness_db database.`)
 );
 
 function start() {
@@ -41,13 +41,13 @@ function start() {
                     generateHTML(employees)
                     break;
                 case 'View All Roles':
-                    addEngineer();
+                    viewRoles();
                     break;
                 case 'Add Role':
                     addIntern();
                     break;
                 case 'View All Departments':
-                    generateHTML(employees)
+                    viewDepartments();
                     break;
                 case 'Add Department':
                     addEngineer();
@@ -60,7 +60,7 @@ function start() {
 }
 
 function viewEmployees() {
-    let query = "SELECT * from employee"
+    let query = "SELECT * from employee";
     conn.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
@@ -68,4 +68,44 @@ function viewEmployees() {
     });
 }
 
+//done
+function viewDepartments() {
+    let query = "SELECT * from department";
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
+//kinda done
+function viewRoles() {
+    let query = "SELECT * role";
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
+//kinda
+function viewEmployee() {
+    let query = "SELECT * employee JOIN ";
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
+function addDepartment(){
+    inquirer
+        .prompt(
+            {
+                message: 'What is the name of the department?',
+                name: 'name',
+            }
+        )
+        .then()
+}
 start()

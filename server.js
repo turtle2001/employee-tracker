@@ -1,15 +1,19 @@
-const inquirer = require('inquirer');
-const mysql = require('mysql2');
-const cTable = require('console.table');
+import inquirer from 'inquirer';
+import mysql from 'mysql2';
+import cTbale from 'console.table';
 
-const db = mysql.createConnection(
+// const inquirer = require('inquirer');
+// const mysql = require('mysql2');
+// const cTable = require('console.table');
+
+const conn = mysql.createConnection(
     {
         host: 'localhost',
         // MySQL username,
         user: 'root',
         // MySQL password
         password: 'Oaklandaz921.',
-        database: 'movies_db'
+        database: 'buisness_db'
     },
     console.log(`Connected to the movies_db database.`)
 );
@@ -22,7 +26,7 @@ function start() {
                 message: 'What would you like to do?',
                 name: 'choice',
                 choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role',
-                    'View All Departments', 'Add Department', 'Quit', 'View All Employees']
+                    'View All Departments', 'Add Department', 'Quit']
             }
         )
         .then((res) => {
@@ -51,10 +55,17 @@ function start() {
                 case 'Quit':
                     addIntern();
                     break;
-                case 'View All Employees':
-                    generateHTML(employees)
-                    break;
             }
         })
 }
 
+function viewEmployees() {
+    let query = "SELECT * from employee"
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
+start()

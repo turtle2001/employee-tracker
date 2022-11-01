@@ -35,16 +35,16 @@ function start() {
                     viewEmployees();
                     break;
                 case 'Add Employee':
-                    addIntern();
+                    addEmployee();
                     break;
                 case 'Update Employee Role':
-                    generateHTML(employees)
+                    updateRole()
                     break;
                 case 'View All Roles':
                     viewRoles();
                     break;
                 case 'Add Role':
-                    addIntern();
+                    addRole();
                     break;
                 case 'View All Departments':
                     viewDepartments();
@@ -53,7 +53,7 @@ function start() {
                     addDepartment();
                     break;
                 case 'Quit':
-                    addIntern();
+                    quit();
                     break;
             }
         })
@@ -98,7 +98,7 @@ function viewEmployee() {
     });
 }
 
-//almost done
+//done
 function addDepartment() {
     inquirer
         .prompt(
@@ -109,6 +109,78 @@ function addDepartment() {
         )
         .then((res) => {
             let query = `INSERT INTO department (id, name) VALUES (5,"${res.name}");`;
+            conn.query(query, function (err, res) {
+                if (err) throw err;
+                viewDepartments();
+                start();
+            });
+        })
+}
+
+// let roles;
+// conn.query(query, function (err, res) {
+//     if (err) throw err;
+//     roles = res.map((list) => { return list.title; })
+//     console.log(roles);
+// });
+// console.log(roles);
+
+function addRole() {
+    let query = "SELECT title FROM role";
+    inquirer
+        .prompt([
+            {
+                message: 'What is the name of the role?',
+                name: 'name',
+            },
+            {
+                message: 'What is the salary of the role?',
+                name: 'salary',
+            },
+            {
+                type: 'list',
+                message: 'Which department does the role belong to?',
+                name: 'role',
+                choices: roles,
+            }
+        ])
+        .then((res) => {
+            let query = `INSERT INTO department (id, name) VALUES (5,"${res.name}");`;
+            conn.query(query, function (err, res) {
+                if (err) throw err;
+                viewDepartments();
+                start();
+            });
+        })
+}
+
+function addEmployee() {
+    inquirer
+        .prompt([
+            {
+                message: 'What is the employee\'s first name?',
+                name: 'first',
+            },
+            {
+                message: 'What is the employee\'s last name?',
+                name: 'last',
+            },
+            {
+                type: 'list',
+                message: 'What is the employee\'s role?',
+                name: 'role',
+                choices: roles,
+            },
+            {
+                type: 'list',
+                message: 'Who is the employee\'s manager?',
+                name: 'manager',
+                choices: managers,
+            }
+        ])
+        .then((res) => {
+            let query = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id) 
+            VALUES (9,"${res.first}", "${res.last}", "${res.role}", "${res.manager});`;
             conn.query(query, function (err, res) {
                 if (err) throw err;
                 viewDepartments();

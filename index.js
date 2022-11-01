@@ -59,6 +59,7 @@ function start() {
         })
 }
 
+//done
 function viewEmployees() {
     let query = "SELECT * from employee";
     conn.query(query, function (err, res) {
@@ -88,15 +89,15 @@ function viewRoles() {
     });
 }
 
-//kinda
-function viewEmployee() {
-    let query = "SELECT * employee JOIN ";
-    conn.query(query, function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    });
-}
+// //kinda
+// function viewEmployee() {
+//     let query = "SELECT * employee JOIN ";
+//     conn.query(query, function (err, res) {
+//         if (err) throw err;
+//         console.table(res);
+//         start();
+//     });
+// }
 
 //done
 function addDepartment() {
@@ -108,7 +109,7 @@ function addDepartment() {
             }
         )
         .then((res) => {
-            let query = `INSERT INTO department (id, name) VALUES (5,"${res.name}");`;
+            let query = `INSERT INTO department (name) VALUES ("${res.name}");`;
             conn.query(query, function (err, res) {
                 if (err) throw err;
                 viewDepartments();
@@ -145,7 +146,7 @@ function addRole() {
             }
         ])
         .then((res) => {
-            let query = `INSERT INTO department (id, name) VALUES (5,"${res.name}");`;
+            let query = `INSERT INTO department (name) VALUES ("${res.name}");`;
             conn.query(query, function (err, res) {
                 if (err) throw err;
                 viewDepartments();
@@ -179,8 +180,8 @@ function addEmployee() {
             }
         ])
         .then((res) => {
-            let query = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id) 
-            VALUES (9,"${res.first}", "${res.last}", "${res.role}", "${res.manager});`;
+            let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+            VALUES ("${res.first}", "${res.last}", "${res.role}", "${res.manager});`;
             conn.query(query, function (err, res) {
                 if (err) throw err;
                 viewDepartments();

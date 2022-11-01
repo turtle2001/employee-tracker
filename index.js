@@ -60,16 +60,6 @@ function start() {
 }
 
 //done
-function viewEmployees() {
-    let query = "SELECT * from employee";
-    conn.query(query, function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    });
-}
-
-//done
 function viewDepartments() {
     let query = "SELECT * from department";
     conn.query(query, function (err, res) {
@@ -79,9 +69,9 @@ function viewDepartments() {
     });
 }
 
-//kinda done
+//done
 function viewRoles() {
-    let query = "SELECT * role";
+    let query = "SELECT role.id AS roleID, role.title AS title, department.name AS department, role.salary AS salary FROM role JOIN department ON department.id = role.department_id;";
     conn.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
@@ -89,15 +79,16 @@ function viewRoles() {
     });
 }
 
-// //kinda
-// function viewEmployee() {
-//     let query = "SELECT * employee JOIN ";
-//     conn.query(query, function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//         start();
-//     });
-// }
+//done
+function viewEmployees() {
+    let query = "SELECT * from employee";
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
 
 //done
 function addDepartment() {
@@ -118,13 +109,14 @@ function addDepartment() {
         })
 }
 
-// let roles;
-// conn.query(query, function (err, res) {
-//     if (err) throw err;
-//     roles = res.map((list) => { return list.title; })
-//     console.log(roles);
-// });
-// console.log(roles);
+async function depList() {
+    conn.query(query, function (err, res) {
+        if (err) throw err;
+        let roles = res.map((list) => { return list.title; })
+        console.log(roles);
+        return roles;
+    });
+}
 
 function addRole() {
     let query = "SELECT title FROM role";

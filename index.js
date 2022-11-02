@@ -12,7 +12,7 @@ const conn = mysql.createConnection(
         // MySQL username,
         user: 'root',
         // MySQL password
-        password: 'password',
+        password: 'Oaklandaz921.',
         database: 'buisness_db'
     },
     console.log(`Connected to the buisness_db database.`)
@@ -108,7 +108,6 @@ function addDepartment() {
 }
 
 function addRole(list) {
-    console.log(list)
     inquirer
         .prompt([
             {
@@ -127,23 +126,19 @@ function addRole(list) {
             }
         ])
         .then((res) => {
-            console.log(res.dep + " " + list.name)
             let id;
-            for (let i = 0; i < list.lenght; i++) {
+            for (let i = 0; i < list.length; i++) {
                 if (res.dep == list[i].name) {
-                    id = list[i].id;
-                    console.log("reach")
+                    id = i + 1;
                     break;
                 }
             }
-
-            console.log(id)
-            // let query = `INSERT INTO role (title, salary, department_id) VALUES ("${res.name}", ${res.salary}, "${res.id}");`;
-            // conn.query(query, function (err, res) {
-            //     if (err) throw err;
-            //     viewDepartments();
-            //     start();
-            // });
+            let query = `INSERT INTO role (title, salary, department_id) VALUES ("${res.name}", ${res.salary}, "${id}");`;
+            conn.query(query, function (err, res) {
+                if (err) throw err;
+                viewDepartments();
+                start();
+            });
         })
 }
 
@@ -191,7 +186,6 @@ function depList() {
         if (err) throw err;
         addRole(res)
     })
-    return 2;
 }
 
 function manList() {

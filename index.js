@@ -12,7 +12,7 @@ const conn = mysql.createConnection(
         // MySQL username,
         user: 'root',
         // MySQL password
-        password: '',
+        password: 'password',
         database: 'buisness_db'
     },
     console.log(`Connected to the buisness_db database.`)
@@ -44,7 +44,7 @@ function start() {
                     viewRoles();
                     break;
                 case 'Add Role':
-                    addRole();
+                    depList();
                     break;
                 case 'View All Departments':
                     viewDepartments();
@@ -71,7 +71,7 @@ function viewDepartments() {
 
 //done
 function viewRoles() {
-    let query = "SELECT role.id AS roleID, role.title AS title, department.name AS department, role.salary AS salary FROM role JOIN department ON department.id = role.department_id;";
+    let query = "SELECT role.id AS RoleID, role.title AS Title, department.name AS Department, role.salary AS Salary FROM role JOIN department ON department.id = role.department_id;";
     conn.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
@@ -80,8 +80,8 @@ function viewRoles() {
 }
 
 //manager not done
-function viewEmployees() {                                                                                                                                                               // FROM employees JOIN roles ON roles.roles_id = employees.roles_id JOIN departments ON departments.departments_id = roles.departments_id;',
-    let query = "SELECT employee.id AS id, employee.first_name AS First_Name, employee.last_name AS Last_Name, role.title AS title, department.name AS department, role.salary AS salary FROM employee JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id;";
+function viewEmployees() {
+    let query = "SELECT employee.id AS Id, employee.first_name AS First_Name, employee.last_name AS Last_Name, role.title AS Title, department.name AS Department, role.salary AS Salary, employee.id AS Manager FROM employee JOIN role ON role.id = employee.role_id JOIN department ON department.id = role.department_id;";
     conn.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
@@ -102,26 +102,16 @@ function addDepartment() {
             let query = `INSERT INTO department (name) VALUES ("${res.name}");`;
             conn.query(query, function (err, res) {
                 if (err) throw err;
-                viewDepartments();
                 start();
             });
         })
 }
 
-function depList() {
-    conn.query("SELECT department_name FROM departments", (err, res) => {
-        if (err) throw err;
-        let roles = res.map((list) => { return list.title; })
-        return roles;
-    });
-}
-
-function addRole() {
-    let list = depList();
+function addRole(list) {
+    console.log(list)
     inquirer
         .prompt([
             {
-                type: 'input',
                 message: 'What is the name of the role?',
                 name: 'name',
             },
@@ -132,18 +122,28 @@ function addRole() {
             {
                 type: 'list',
                 message: 'Which department does the role belong to?',
-                name: 'role',
+                name: 'dep',
                 choices: list,
             }
         ])
-        .catch((err) => { console.log(err) })
         .then((res) => {
-            let query = `INSERT INTO department (name) VALUES ("${res.name}");`;
-            conn.query(query, function (err, res) {
-                if (err) throw err;
-                viewDepartments();
-                start();
-            });
+            console.log(res.dep + " " + list.name)
+            let id;
+            for (let i = 0; i < list.lenght; i++) {
+                if (res.dep == list[i].name) {
+                    id = list[i].id;
+                    console.log("reach")
+                    break;
+                }
+            }
+
+            console.log(id)
+            // let query = `INSERT INTO role (title, salary, department_id) VALUES ("${res.name}", ${res.salary}, "${res.id}");`;
+            // conn.query(query, function (err, res) {
+            //     if (err) throw err;
+            //     viewDepartments();
+            //     start();
+            // });
         })
 }
 
@@ -162,13 +162,13 @@ function addEmployee() {
                 type: 'list',
                 message: 'What is the employee\'s role?',
                 name: 'role',
-                choices: roles,
+                choices: depList(),
             },
             {
                 type: 'list',
                 message: 'Who is the employee\'s manager?',
                 name: 'manager',
-                choices: managers,
+                choices: manList(),
             }
         ])
         .then((res) => {
@@ -181,4 +181,35 @@ function addEmployee() {
             });
         })
 }
+
+function updateRole() {
+    empList();
+}
+
+function depList() {
+    conn.query("SELECT * FROM department", (err, res) => {
+        if (err) throw err;
+        addRole(res)
+    })
+    return 2;
+}
+
+function manList() {
+    conn.query("SELECT manager_id FROM employee", (err, res) => {
+        if (err) throw err;
+        let list = res.map((list) => { return list.manager_id; })
+        console.log(list);
+        return list;
+    });
+}
+
+function empList() {
+    conn.query("SELECT first_name, last_name FROM employee", (err, res) => {
+        if (err) throw err;
+        let list = res.map((list) => { return `${list.first_name} ${list.last_name}`; })
+        console.log(list);
+        return list;
+    });
+}
+
 start()

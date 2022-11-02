@@ -12,7 +12,7 @@ const conn = mysql.createConnection(
         // MySQL username,
         user: 'root',
         // MySQL password
-        password: 'Oaklandaz921.',
+        password: '',
         database: 'buisness_db'
     },
     console.log(`Connected to the buisness_db database.`)
@@ -44,7 +44,7 @@ function start() {
                     viewRoles();
                     break;
                 case 'Add Role':
-                    depList();
+                    addRole();
                     break;
                 case 'View All Departments':
                     viewDepartments();
@@ -107,39 +107,42 @@ function addDepartment() {
         })
 }
 
-function addRole(list) {
-    inquirer
-        .prompt([
-            {
-                message: 'What is the name of the role?',
-                name: 'name',
-            },
-            {
-                message: 'What is the salary of the role?',
-                name: 'salary',
-            },
-            {
-                type: 'list',
-                message: 'Which department does the role belong to?',
-                name: 'dep',
-                choices: list,
-            }
-        ])
-        .then((res) => {
-            let id;
-            for (let i = 0; i < list.length; i++) {
-                if (res.dep == list[i].name) {
-                    id = i + 1;
-                    break;
+//done
+function addRole() {
+    conn.query("SELECT * FROM department", (err, res) => {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    message: 'What is the name of the role?',
+                    name: 'name',
+                },
+                {
+                    message: 'What is the salary of the role?',
+                    name: 'salary',
+                },
+                {
+                    type: 'list',
+                    message: 'Which department does the role belong to?',
+                    name: 'dep',
+                    choices: res,
                 }
-            }
-            let query = `INSERT INTO role (title, salary, department_id) VALUES ("${res.name}", ${res.salary}, "${id}");`;
-            conn.query(query, function (err, res) {
-                if (err) throw err;
-                viewDepartments();
-                start();
-            });
-        })
+            ])
+            .then((data) => {
+                let id;
+                for (let i = 0; i < res.length; i++) {
+                    if (data.dep == res[i].name) {
+                        id = i + 1;
+                        break;
+                    }
+                }
+                let query = `INSERT INTO role (title, salary, department_id) VALUES ("${data.name}", ${data.salary}, "${id}");`;
+                conn.query(query, function (err, res3) {
+                    if (err) throw err;
+                    start();
+                });
+            })
+    })
 }
 
 function addEmployee() {
@@ -179,13 +182,6 @@ function addEmployee() {
 
 function updateRole() {
     empList();
-}
-
-function depList() {
-    conn.query("SELECT * FROM department", (err, res) => {
-        if (err) throw err;
-        addRole(res)
-    })
 }
 
 function manList() {

@@ -2,10 +2,6 @@ import inquirer from 'inquirer';
 import mysql from 'mysql2';
 import cTbale from 'console.table';
 
-// const inquirer = require('inquirer');
-// const mysql = require('mysql2');
-// const cTable = require('console.table');
-
 const conn = mysql.createConnection(
     {
         host: 'localhost',
@@ -146,51 +142,51 @@ function addRole() {
 }
 
 function addEmployee() {
-    inquirer
-        .prompt([
-            {
-                message: 'What is the employee\'s first name?',
-                name: 'first',
-            },
-            {
-                message: 'What is the employee\'s last name?',
-                name: 'last',
-            },
-            {
-                type: 'list',
-                message: 'What is the employee\'s role?',
-                name: 'role',
-                choices: depList(),
-            },
-            {
-                type: 'list',
-                message: 'Who is the employee\'s manager?',
-                name: 'manager',
-                choices: manList(),
-            }
-        ])
-        .then((res) => {
-            let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-            VALUES ("${res.first}", "${res.last}", "${res.role}", "${res.manager});`;
-            conn.query(query, function (err, res) {
-                if (err) throw err;
-                viewDepartments();
-                start();
-            });
-        })
+    conn.query("SELECT * FROM role", (err, res) => {
+        if (err) throw err;
+        let list = res.map((list) => { return list.title; })
+        inquirer
+            .prompt([
+                {
+                    message: 'What is the employee\'s first name?',
+                    name: 'first',
+                },
+                {
+                    message: 'What is the employee\'s last name?',
+                    name: 'last',
+                },
+                {
+                    type: 'list',
+                    message: 'What is the employee\'s role?',
+                    name: 'role',
+                    choices: list,
+                },
+                {
+                    type: 'list',
+                    message: 'Who is the employee\'s manager?',
+                    name: 'manager',
+                    choices: ['Elon Musk'],
+                }
+            ])
+            .then((data) => {
+                let id;
+                for (let i = 0; i < res.length; i++) {
+                    if (data.role == res[i].title) {
+                        id = i + 1;
+                        break;
+                    }
+                }
+                let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${data.first}", "${data.last}", ${id}, 999);`;
+                conn.query(query, function (err, res) {
+                    if (err) throw err;
+                    start();
+                });
+            })
+    })
 }
 
 function updateRole() {
     empList();
-}
-
-function manList() {
-    conn.query("SELECT manager_id FROM employee", (err, res) => {
-        if (err) throw err;
-        let list = res.map((list) => { return list.manager_id; })
-        console.log(list);
-        return list;
-    });
 }
 
 function empList() {
@@ -202,4 +198,7 @@ function empList() {
     });
 }
 
+function quit() {
+    process.quit
+}
 start()
